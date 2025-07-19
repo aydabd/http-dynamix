@@ -1,9 +1,15 @@
 docs:
-  - 'docs/**'
+  - changed-files:
+    - any-glob-to-any-file: ['docs/**']
+
 tests:
-  - 'tests/**'
+  - changed-files:
+    - any-glob-to-any-file: ['tests/**']
+
 source:
-  - 'src/**'
+  - changed-files:
+    - any-glob-to-any-file: ['src/**']
+
 config:
-  - '*.toml'
-  - '.github/**'
+  - changed-files:
+    - any-glob-to-any-file: ['*.toml', '.github/**']
