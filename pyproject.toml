@@ -252,6 +252,6 @@ exclude_also = [
     ]
 
 [tool.codespell]
-skip = "*.po,*.ts,./src/3rdParty,./src/Test,./docs/_build,./ideas,./.git,./.github"
+skip = "*.po,*.ts,./src/3rdParty,./src/Test,./docs/_build,./ideas,./.git,./.github,pyproject.toml"
 count = true
 quiet-level = 3

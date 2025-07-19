@@ -1,51 +1,59 @@
-"""Tests for synchronous and asynchronous HTTP clients using httpbin.org."""
 import pytest
-from http_dynamix import ClientFactory, ClientType, SegmentFormat
+import httpx
+
+from http_dynamix import ClientFactory, ClientType
+
+BASE_URL = "http://test"
 
 
-HTTPBIN_URL = "http://httpbin.org"
+from datetime import timedelta
 
-@pytest.fixture
-def httpbin_sync_client():
-    """Fixture for creating a synchronous HTTP client for httpbin.org."""
-    client = ClientFactory.create(HTTPBIN_URL)
+
+def _mock_send(request: httpx.Request) -> httpx.Response:
+    response = httpx.Response(200, request=request, json={"url": str(request.url)})
+    response._elapsed = timedelta(0)
+    return response
+
+
+@pytest.fixture()
+def sync_client():
+    transport = httpx.MockTransport(_mock_send)
+    client = ClientFactory.create(BASE_URL, transport=transport)
     yield client
     client.close()
 
 
-class TestHttpbinClient:
-    """Tests for the synchronous HTTP client using httpbin.org."""
-
-    @pytest.mark.parametrize("params, status_code", [
-        ({"freeform": "test"}, 200)
+class TestSyncClient:
+    @pytest.mark.parametrize("segment,param", [
+        ("response_headers", {"freeform": "test"}),
     ])
-    def test_sync_client_get(self, httpbin_sync_client, params, status_code):
-        response = httpbin_sync_client.response_headers.get(params=params)
-        assert response.status_code == status_code
+    def test_sync_client_get(self, sync_client, segment, param):
+        response = getattr(sync_client, segment).get(params=param)
+        assert response.status_code == 200
+        assert "/response-headers" in response.json()["url"]
 
-    def test_sync_client_nested_post(self, httpbin_sync_client):
-        expected_status_code = 200
-        response = httpbin_sync_client.post.post()
-        assert response.status_code == expected_status_code
+    def test_sync_client_nested_post(self, sync_client):
+        response = sync_client.post.post()
+        assert response.status_code == 200
+        assert "/post" in response.json()["url"]
 
-    def test_sync_client_nested_get(self, httpbin_sync_client):
-        expected_status_code = 200
-        response = httpbin_sync_client.get.get()
-        assert response.status_code == expected_status_code
+    def test_sync_client_nested_get(self, sync_client):
+        response = sync_client.get.get()
+        assert response.status_code == 200
+        assert "/get" in response.json()["url"]
 
-    def test_sync_client_path_attr(self, httpbin_sync_client):
-        expected_status_code = 200
-        response = httpbin_sync_client.status.status[200].get()
-        assert response.status_code == expected_status_code
+    def test_sync_client_path_attr(self, sync_client):
+        response = sync_client.status.status[200].get()
+        assert response.status_code == 200
+        assert "/status/200" in response.json()["url"]
 
 
-class TestHttpbinAsyncClient:
-    """Tests for the asynchronous HTTP client using httpbin.org."""
-
+class TestAsyncClient:
     @pytest.mark.asyncio
     async def test_async_client(self):
-        expected_status_code = 200
+        transport = httpx.MockTransport(_mock_send)
+        async with ClientFactory.create(BASE_URL, client_type=ClientType.ASYNC, transport=transport) as client:
+            resp = await client.response_headers.get(params={"freeform": "test"})
+            assert resp.status_code == 200
+            assert "/response-headers" in resp.json()["url"]
 
-        async with ClientFactory.create(HTTPBIN_URL, client_type=ClientType.ASYNC) as httpbin_async_client:
-            response = await httpbin_async_client.response_headers.get(params={"freeform": "test"})
-            assert response.status_code == expected_status_code

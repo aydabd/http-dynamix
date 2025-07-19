@@ -179,7 +179,7 @@ class HtmlFormatter:
             soup = BeautifulSoup(content, "html.parser")
             formatted = soup.prettify()
             if max_length and len(formatted) > max_length:
-                return f"{formatted[:max_length]}... [truncated]"
+                return f"{str(formatted)[:max_length]}... [truncated]"
             return formatted
         except Exception as e:
             return f"[Error formatting HTML: {str(e)}]"
