@@ -1,0 +1,9 @@
+docs:
+  - 'docs/**'
+tests:
+  - 'tests/**'
+source:
+  - 'src/**'
+config:
+  - '*.toml'
+  - '.github/**'

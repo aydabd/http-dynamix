@@ -1,0 +1,257 @@
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[project]
+name = "http-dynamix"
+dynamic = ["version"]
+description = "Dynamic HTTP client from httpx"
+readme = "README.rst"
+license = "MIT"
+authors = [
+    { name = "Aydin Abdi", email = "ayd.abd@gmail.com"},
+]
+
+keywords = [
+    "qa",
+    "quality assurance",
+    "testing",
+    "rest-api",
+    "pytest",
+    "python",
+    "library",
+]
+
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: Other/Proprietary License",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+    "Framework :: Pytest",
+    "Topic :: Software Development :: Testing",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Quality Assurance",
+    "Topic :: Utilities",
+    "Typing :: Typed",
+]
+
+dependencies = [
+    "httpx",
+    "loguru",
+    "tenacity",
+    "pyyaml",
+    "bs4",
+    "lxml",
+]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.version]
+source = "vcs"
+[tool.hatch.build.hooks.vcs]
+version-file = "src/http_dynamix/_version.py"
+
+[project.scripts]
+http-dynamix = "http_dynamix.__main__:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/http_dynamix"]
+
+[tool.hatch.build.targets.sdist]
+packages = ["src/http_dynamix"]
+
+[tool.ruff]
+line-length = 88
+include = ["src/http_dynamix/*", "pyproject.toml"]
+exclude = [
+    "__init__.py",
+    "src/http_dynamix/_version.py",
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.isort]
+known-first-party = ["http_dynamix"]
+known-third-party = ["httpx", "loguru", "tenacity", "pyyaml"]
+
+[tool.ruff.lint]
+select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # pyupgrade
+    "UP",
+    # flake8-bugbear
+    "B",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
+    # pydocstyle
+    "D",
+]
+
+exclude = [
+    "src/http_dynamix/_version.py",
+    "src/http_dynamix/__main__.py",
+    "**/__pycache__/**",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__main__.py" = ["F401"]
+
+[tool.mypy]
+strict = true
+no_implicit_optional = true
+cache_dir = ".mypy_cache"
+ignore_missing_imports = true
+strict_optional = true
+warn_unreachable = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+
+[tool.hatch.envs.docs]
+dependencies = [
+    "sphinx",
+    "sphinxcontrib-confluencebuilder",
+    "python-dotenv",
+    "sphinx-rtd-theme",
+    "pypandoc",
+    "loguru",
+]
+
+[tool.hatch.envs.docs.scripts]
+build-html = "sphinx-build -W --keep-going -b html docs docs/_build/html"
+build-confluence = "sphinx-build -v -b confluence docs docs/_build/confluence -D confluence_publish=false"
+connect-test = "python -m sphinxcontrib.confluencebuilder connection-test"
+all = [
+    "build-html",
+    "build-confluence",
+]
+
+[tool.hatch.envs.tests]
+dependencies = [
+    "pytest",
+    "pytest-cov",
+    "pytest-xdist",
+    "pytest-mock",
+]
+
+[tool.hatch.envs.tests.scripts]
+tests = "pytest {args:tests}"
+all = [
+    "tests",
+]
+
+[tool.hatch.envs.pre-release]
+dependencies = [
+    "pytest",
+    "pytest-cov",
+    "pytest-xdist",
+    "pytest-mock",
+    "pytest-asyncio",
+    "mypy",
+    "sphinx",
+    "sphinxcontrib-confluencebuilder",
+    "sphinx-rtd-theme",
+    "python-dotenv",
+    "pypandoc",
+    "codespell",
+]
+
+[tool.hatch.envs.pre-release.scripts]
+parallel = "true"
+lint = "hatch fmt {args:src/http_dynamix}"
+tests = "pytest {args:tests -s}"
+type-checks = "mypy --install-types --non-interactive {args:src/http_dynamix}"
+docs-html = """
+    sphinx-build -v -W --keep-going -b html docs docs/_build/html && python -c "from pathlib import Path; print('Docs built under file://' + str((Path.cwd() / 'docs/_build/html' / 'index.html').resolve()))"
+"""
+docs-confluence = """
+    sphinx-build -v -W --keep-going -b confluence docs docs/_build/confluence -D confluence_publish=false && python -c "from pathlib import Path; print('Docs built under file://' + str((Path.cwd() / 'docs/_build/confluence' / 'index.conf').resolve()))"
+"""
+spelling = "codespell"
+all = [
+    "lint",
+    "tests",
+    "docs-html",
+    "docs-confluence",
+    "type-checks",
+    "spelling",
+]
+
+[tool.hatch.envs.release]
+dependencies = [
+    "sphinx",
+    "sphinxcontrib-confluencebuilder",
+    "sphinx-rtd-theme",
+    "python-dotenv",
+    "pypandoc",
+    "loguru",
+]
+
+[tool.hatch.envs.release.scripts]
+docs-confluence-publish = "sphinx-build -v -W --keep-going -b confluence docs docs/_build/confluence -D confluence_publish=true"
+all = [
+    "docs-confluence-publish",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+log_cli = true
+log_cli_level = "INFO"
+log_cli_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
+junit_suite_name = "http-dynamix"
+junit_logging = "system-out"
+addopts = [
+    "-rf",
+    "--strict-markers",
+    "--strict-config",
+    "--cov=src/http_dynamix",
+    "--cov-report=term-missing",
+    "--cov-report=xml:test-report/coverage.xml",
+    "--junitxml=test-report/junit.xml",
+    "--color=yes",
+]
+filterwarnings = "ignore::DeprecationWarning"
+
+[tool.coverage.run]
+data_file = "test-report/.coverage"
+branch = true
+omit = [
+    "*/tests/*",
+    "src/http_dynamix/_version.py",
+    "src/http_dynamix/__main__.py",
+]
+disable_warnings = ["no-data-collected"]
+
+[tool.coverage.report]
+# fail_under = 100
+precision = 0
+show_missing = true
+skip_covered = false
+exclude_also = [
+    # Don't complain about missing debug-only code:
+    "def __repr__",
+    "if TYPE_CHECKING",
+    "if self\\.debug",
+
+    # Don't complain if tests don't hit defensive assertion code:
+    "raise AssertionError",
+    "raise NotImplementedError",
+
+    # Don't complain about abstract methods, they aren't run:
+    "@(abc\\.)?abstractmethod",
+    ]
+
+[tool.codespell]
+skip = "*.po,*.ts,./src/3rdParty,./src/Test,./docs/_build,./ideas,./.git,./.github"
+count = true
+quiet-level = 3

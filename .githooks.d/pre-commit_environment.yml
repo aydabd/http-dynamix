@@ -1,0 +1,15 @@
+# This file is a template for the environment.yml file
+# that is used to create the micromamba environment.
+# The environment.yml file is created in the mamba-githook application
+# User can edit this file to add or remove packages from the environment.
+# for more information for other options see:
+# https://mamba.readthedocs.io/en/latest/user_guide/micromamba.html#conda-yaml-spec-files
+
+name: mamba-githook
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python
+  - hatch
+  - pandoc
