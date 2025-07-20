@@ -6,9 +6,5 @@ services:
       dockerfile: Dockerfile
     networks:
       - http-dynamix-tests
-    # To run all tests (default):
-    command: ["pytest", "-n", "auto", "tests"]
-    # To run only integration tests, override with:
-    # command: ["pytest", "-n", "auto", "tests/test_clients_integration.py"]
 networks:
   http-dynamix-tests:

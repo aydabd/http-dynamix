@@ -235,7 +235,8 @@ class CsvFormatter:
 
             for row in rows:
                 formatted_row = " | ".join(
-                    str(cell).ljust(width) for cell, width in zip(row, col_widths)
+                    str(cell).ljust(width)
+                    for cell, width in zip(row, col_widths, strict=False)
                 )
                 formatted_rows.append(f"| {formatted_row} |")
 

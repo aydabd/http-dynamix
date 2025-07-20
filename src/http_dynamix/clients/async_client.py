@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Coroutine
 from dataclasses import dataclass, field
-from typing import Any, Coroutine, cast
+from typing import Any, cast
 
 import httpx
 from httpx import Response

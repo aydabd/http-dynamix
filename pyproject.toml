@@ -6,31 +6,51 @@ build-backend = "hatchling.build"
 name = "http-dynamix"
 dynamic = ["version"]
 description = "Dynamic HTTP client from httpx"
-readme = "README.rst"
 license = "MIT"
 authors = [
     { name = "Aydin Abdi", email = "ayd.abd@gmail.com"},
 ]
+maintainers = [
+    { name = "Aydin Abdi", email = "ayd.abd@gmail.com"},
+]
+readme = "README.md"
+requires-python = ">=3.11"
+homepage = "https://github.com/aydabd/http-dynamix"
+repository = "https://github.com/aydabd/http-dynamix"
+documentation = "https://github.com/aydabd/http-dynamix#readme"
 
 keywords = [
-    "qa",
-    "quality assurance",
-    "testing",
+    "httpx",
+    "http-client",
+    "dynamic-client",
+    "api-client",
     "rest-api",
+    "testing",
     "pytest",
+    "automation",
+    "quality-assurance",
     "python",
     "library",
+    "async",
+    "sync",
 ]
 
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
-    "License :: Other/Proprietary License",
-    "Programming Language :: Python :: 3.10",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Other Audience",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Operating System :: OS Independent",
     "Framework :: Pytest",
+    "Framework :: AsyncIO",
+    "Framework :: Hatch",
     "Topic :: Software Development :: Testing",
     "Topic :: Software Development :: Libraries",
     "Topic :: Software Development :: Libraries :: Python Modules",
@@ -40,7 +60,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "httpx",
+    "httpx[cli]",
     "loguru",
     "tenacity",
     "pyyaml",
@@ -56,9 +76,6 @@ source = "vcs"
 [tool.hatch.build.hooks.vcs]
 version-file = "src/http_dynamix/_version.py"
 
-[project.scripts]
-http-dynamix = "http_dynamix.__main__:main"
-
 [tool.hatch.build.targets.wheel]
 packages = ["src/http_dynamix"]
 
@@ -71,6 +88,7 @@ include = ["src/http_dynamix/*", "pyproject.toml"]
 exclude = [
     "__init__.py",
     "src/http_dynamix/_version.py",
+    "src/http_dynamix/py.typed",
 ]
 
 [tool.ruff.lint.pydocstyle]

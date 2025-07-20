@@ -4,24 +4,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    volumes:
+      - ./tests:/app/tests
     networks:
       - http-dynamix-tests
-
-    # Common Test Commands:
-    # Here we have some command that can be used as an examples.
-    # Uncomment the command that you want to use and comment the rest of the commands.
-    ##############################################################
-    ##### NOTE: Just one command should be uncommented at a time #
-    ##############################################################
-    #
-    #######################################################
-    ##### NOTE: Examples are based on httpbin.org service #
-    #######################################################
-
-    ###########################################################################
-    # Run all tests                                                           #
-    ###########################################################################
-    # command: ["run", "--checks", "all", "--workers", "auto"]
+    command: ["pytest", "-n", "auto", "tests"]
 
 networks:
- http-dynamix-tests:
+  http-dynamix-tests:
