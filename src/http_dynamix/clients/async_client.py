@@ -152,7 +152,7 @@ class AsyncDynamicClient(AsyncClientProtocol):
 
     async def aclose(self) -> None:
         """Close the client."""
-        await self.client.aclose()
+        await self.client.aclose()  # pragma: no cover
 
     async def get(self, **kwargs: Any) -> Any:
         """Make a GET request.

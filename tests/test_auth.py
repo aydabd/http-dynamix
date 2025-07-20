@@ -49,3 +49,42 @@ def test_filter_and_prepare():
     prepared = prepare_auth(**kwargs)
     assert isinstance(prepared, MultiAuth)
 
+
+def test_create_auth_none():
+    assert create_auth() is None
+
+
+def test_create_auth_token_only():
+    auth = create_auth(token="t")
+    assert isinstance(auth, MultiAuth)
+    assert len(auth.auth_methods) == 1
+    assert isinstance(auth.auth_methods[0], BearerAuth)
+
+
+def test_create_auth_api_key_only():
+    auth = create_auth(api_key="k")
+    assert isinstance(auth, MultiAuth)
+    assert len(auth.auth_methods) == 1
+    assert isinstance(auth.auth_methods[0], ApiKeyAuth)
+
+
+def test_create_auth_basic_only():
+    auth = create_auth(username="u", password="p")
+    assert isinstance(auth, MultiAuth)
+    assert len(auth.auth_methods) == 1
+    assert isinstance(auth.auth_methods[0], httpx.BasicAuth)
+
+
+def test_create_auth_basic_missing_username():
+    auth = create_auth(password="p")
+    assert auth is None
+
+
+def test_create_auth_basic_missing_password():
+    auth = create_auth(username="u")
+    assert auth is None
+
+
+def test_prepare_auth_none():
+    assert prepare_auth() is None
+

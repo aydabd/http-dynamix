@@ -229,18 +229,12 @@ omit = [
     "*/tests/*",
     "src/http_dynamix/_version.py",
     "src/http_dynamix/__main__.py",
-    "src/http_dynamix/clients/*",
-    "src/http_dynamix/httpx_logger.py",
-    "src/http_dynamix/log.py",
-    "src/http_dynamix/core/segment_format.py",
     "src/http_dynamix/protocols.py",
-    "src/http_dynamix/factory.py",
-    "src/http_dynamix/auth.py",
 ]
 disable_warnings = ["no-data-collected"]
 
 [tool.coverage.report]
-# fail_under = 100
+fail_under = 100
 precision = 0
 show_missing = true
 skip_covered = false
