@@ -9,8 +9,8 @@ Prerequisites
 
 - Docker installed and running
 
-Basic Setup with Docker Compose(Recommended)
---------------------------------------------
+Basic Setup with Docker Compose (Recommended)
+---------------------------------------------
 
 1. Create test directory:
 
@@ -31,15 +31,23 @@ Basic Setup with Docker Compose(Recommended)
    :caption: test_httpbin_org_service.py
    :linenos:
 
-. Create compose.yaml:
+4. Create compose.yaml:
 
 .. literalinclude:: ../examples/compose.yaml
    :language: yaml
    :caption: compose.yaml
    :linenos:
 
-4. Run docker compose:
+5. Run all tests in parallel:
 
 .. code-block:: bash
 
-   docker compose run -it --rm http-dynamix-api-service-tests:latest
+   docker compose up --build
+
+6. To run only integration tests, override the command in compose.yaml:
+
+.. code-block:: yaml
+
+   command: ["pytest", "-n", "auto", "tests/test_clients_integration.py"]
+
+This uses pytest-xdist for parallel execution. The Dockerfile and compose.yaml are set up for both CI and local testing.

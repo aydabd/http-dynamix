@@ -20,5 +20,5 @@ ARG MAMBA_DOCKERFILE_ACTIVATE=1
 # Install package
 RUN pip install -e .
 
-# Run tests
-ENTRYPOINT ["pytest", "tests"]
+# Run tests in parallel by default
+ENTRYPOINT ["pytest", "-n", "auto", "tests"]

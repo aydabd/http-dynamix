@@ -58,4 +58,10 @@ This command executes formatting, static type checks, tests with coverage, and d
 
 The CI pipeline uses the same micromamba environment spec to ensure consistency between local and CI environments.
 
+## Docker/Compose Usage
+
+- The provided Dockerfile and compose.yaml run all tests in parallel by default using pytest-xdist.
+- To run only integration tests, override the command in compose.yaml as shown in the README.
+- This setup works for both CI and local development.
+
 

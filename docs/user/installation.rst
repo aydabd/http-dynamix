@@ -39,10 +39,25 @@ Local Installation In Virtual Environment Via Pip
     # Check installation
     micromamba list http-dynamix
 
+Docker/Compose Installation and Testing
+---------------------------------------
+
+You can use Docker Compose to build and test the project in a containerized environment:
+
+.. code-block:: bash
+
+    docker compose up --build
+
+To run only integration tests, override the command in compose.yaml:
+
+.. code-block:: yaml
+
+    command: ["pytest", "-n", "auto", "tests/test_clients_integration.py"]
+
 Dependencies
 ------------
 
-Dependencies will be installed automatically when installing the package via pip.
+Dependencies will be installed automatically when installing the package via pip or when building the Docker image.
 
 Core Dependencies
 ^^^^^^^^^^^^^^^^^

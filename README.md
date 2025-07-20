@@ -14,7 +14,7 @@ This guide helps you get started with Http Dynamix.
 
 - Docker installed and running
 
-## Basic Setup with Docker Compose(Recommended)
+## Basic Setup with Docker Compose (Recommended)
 
 1.  Create test directory:
 
@@ -38,7 +38,7 @@ mkdir test-api-service && cd test-api-service
 
 </div>
 
-. Create compose.yaml:
+4.  Create compose.yaml:
 
 <div class="literalinclude" language="yaml" caption="compose.yaml" linenos="">
 
@@ -46,11 +46,19 @@ mkdir test-api-service && cd test-api-service
 
 </div>
 
-4.  Run docker compose:
+5.  Run all tests in parallel:
 
 ``` bash
-docker compose run -it --rm http-dynamix-api-service-tests:latest
+docker compose up --build
 ```
+
+6.  To run only integration tests, override the command in compose.yaml:
+
+``` yaml
+command: ["pytest", "-n", "auto", "tests/test_clients_integration.py"]
+```
+
+This uses pytest-xdist for parallel execution. The Dockerfile and compose.yaml are set up for both CI and local testing.
 
 ## Contributing
 
@@ -101,8 +109,21 @@ pip install -e .
 hatch run pre-release:docs-html
 ```
 
-For more information on which environment available, check the
-project's <span class="title-ref">pyproject.toml</span> file.
+## Docker/Compose Test Execution
+
+You can run all tests in parallel using Docker Compose:
+
+``` bash
+docker compose up --build
+```
+
+To run only integration tests, override the command in compose.yaml:
+
+``` yaml
+command: ["pytest", "-n", "auto", "tests/test_clients_integration.py"]
+```
+
+This uses pytest-xdist for parallel execution. The Dockerfile and compose.yaml are set up for both CI and local testing.
 
 ## Publish Documentation To Confluence
 
