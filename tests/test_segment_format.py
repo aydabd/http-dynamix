@@ -1,3 +1,4 @@
+import pytest
 from http_dynamix.core import PathSegment, SegmentFormatter
 from http_dynamix.enums import SegmentFormat
 
@@ -28,4 +29,24 @@ def test_segment_formatter_transform():
     f = SegmentFormatter(SegmentFormat.PASCAL, known)
     assert f.transform("special") == "known"
     assert f.transform("hello_world") == "HelloWorld"
+
+
+@pytest.mark.parametrize("fmt,inp,expected", [
+    (SegmentFormat.CAMEL, "foo_bar", "fooBar"),
+    (SegmentFormat.FLAT, "foo_bar", "foobar"),
+    (SegmentFormat.KEBAB, "foo_bar", "foo-bar"),
+    (SegmentFormat.PASCAL, "foo_bar", "FooBar"),
+    (SegmentFormat.SCREAMING_SNAKE, "foo_bar", "FOO_BAR"),
+    (SegmentFormat.SNAKE, "foo-bar", "foo_bar"),
+])
+def test_transform_all_cases(fmt, inp, expected):
+    f = SegmentFormatter(fmt)
+    assert f.transform(inp) == expected
+
+
+def test_transform_default_branch():
+    class DummyFormat:
+        pass
+    f = SegmentFormatter(DummyFormat)
+    assert f.transform("foo_bar") == "foo-bar"  # kebab_case fallback
 

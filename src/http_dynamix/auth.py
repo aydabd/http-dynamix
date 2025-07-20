@@ -189,6 +189,5 @@ def prepare_auth(**kwargs: Any) -> httpx.Auth | None:
     auth_kwargs = filter_auth_kwargs(kwargs)
     auth = create_auth(**auth_kwargs)
     if auth:
-        logger.debug(f"Prepared authentication: {type(auth) if isinstance(auth,
-                     MultiAuth) else type(auth).__name__}")
+        logger.debug(f"Prepared authentication: {type(auth).__name__}")
     return auth
