@@ -1,14 +1,14 @@
-# Dockerfile for build micromamba:2.0.5 with pytest and pytest-asyncio
-FROM mambaorg/micromamba:2.0.5
+# syntax=docker/dockerfile:1
+FROM mambaorg/micromamba:latest
 
 WORKDIR /app
 
 # Copy files
-COPY --chown=$MAMBA_USER:$MAMBA_USER docs/examples/tests /app/tests
+COPY --chown=$MAMBA_USER:$MAMBA_USER tests/pytest.ini /app/pytest.ini
 
 # Install dependencies
 RUN micromamba install -y -n base -c conda-forge \
-    pip pytest pytest-xdist pytest-asyncio && \
+    python pytest pytest-xdist pytest-asyncio && \
     micromamba clean --all --yes
 
 # Activate env inside container for RUN command
@@ -17,5 +17,6 @@ ARG MAMBA_DOCKERFILE_ACTIVATE=1
 # Install package
 RUN pip install http-dynamix
 
-# Run tests
-ENTRYPOINT ["pytest", "/tests"]
+# Run tests in parallel by default inside micromamba environment
+ENTRYPOINT ["micromamba", "run", "-n", "base"]
+CMD ["pytest", "-n", "auto", "tests"]

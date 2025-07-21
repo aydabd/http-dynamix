@@ -1,0 +1,50 @@
+# GitHub Release workflow
+# This workflow creates a GitHub release and uploads distribution files when a new tag is pushed.
+
+name: GitHub Release
+
+on:
+  push:
+    tags: ['[0-9]+.[0-9]+.[0-9]*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+
+      - name: Download distribution files
+        uses: actions/download-artifact@v4
+        with:
+          name: python-distribution-files
+          path: dist
+
+      - name: Generate changelog
+        id: changelog
+        uses: googleapis/release-please-action@v4
+        with:
+          release-type: python
+
+      - name: Create GitHub Release and upload artifacts
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          files: dist/*
+          body: ${{ steps.changelog.outputs.changelog }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,5 +1,6 @@
 """Integration tests for HTTP Dynamix using httpbin.org."""
 import pytest
+import pytest_asyncio
 from http_dynamix import ClientFactory, ClientType, SegmentFormat
 
 @pytest.fixture
@@ -13,7 +14,7 @@ def httpbin_client():
     yield client
     client.close()
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def async_httpbin_client():
     """Create an async test client for httpbin.org."""
     client = ClientFactory.create(
@@ -22,7 +23,7 @@ async def async_httpbin_client():
         segment_format=SegmentFormat.KEBAB,
     )
     yield client
-    await client.close()
+    await client.aclose()
 
 @pytest.mark.httpbin
 class TestHttpbinIntegration:
@@ -43,13 +44,14 @@ class TestHttpbinIntegration:
         data = response.json()
         assert data["json"] == test_data
 
-    def test_dynamic_path_params(self, httpbin_client):
-        """Test dynamic path parameters."""
-        user_id = 123
-        response = httpbin_client.anything[user_id].get()
+    def test_base64_endpoint(self, httpbin_client):
+        """Test base64 endpoint."""
+        import base64
+        value = "SFRUUEJJTiBpcyBhd2Vzb21l"  # base64 for 'HTTPBIN is awesome'
+        response = httpbin_client.base64.base64[value].get()
         assert response.status_code == 200
-        data = response.json()
-        assert f"/anything/{user_id}" in data["url"]
+        # The response should be the decoded value
+        assert response.text == base64.b64decode(value).decode()
 
     @pytest.mark.asyncio
     async def test_async_get_request(self, async_httpbin_client):

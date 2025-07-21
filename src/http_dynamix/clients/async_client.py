@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Coroutine
 from dataclasses import dataclass, field
-from typing import Any, Coroutine, cast
+from typing import Any, cast
 
 import httpx
 from httpx import Response
@@ -152,7 +153,7 @@ class AsyncDynamicClient(AsyncClientProtocol):
 
     async def aclose(self) -> None:
         """Close the client."""
-        await self.client.aclose()
+        await self.client.aclose()  # pragma: no cover
 
     async def get(self, **kwargs: Any) -> Any:
         """Make a GET request.

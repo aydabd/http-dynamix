@@ -14,15 +14,36 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Run Labeler
-        uses: actions/labeler@v5
+      - name: Patch environment file for Python version
+        run: |
+          sed -i 's/- python/- python=${{ matrix.python-version }}/' .githooks.d/pre-commit_environment.yml
+          sed -i 's/^name: .*/name: http-dynamix-env/' .githooks.d/pre-commit_environment.yml
+      - name: Show patched environment file
+        run: cat .githooks.d/pre-commit_environment.yml
+      - name: Setup micromamba
+        uses: mamba-org/setup-micromamba@v2
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          environment-file: .githooks.d/pre-commit_environment.yml
+          environment-name: http-dynamix-env
+      - name: Run pre-release checks
+        shell: bash -el {0}
+        run: hatch run pre-release:all
+
+  build-pypi:
+    runs-on: ubuntu-latest
+    needs: pre-release
+    steps:
+      - name: Checkout code with tags
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install Hatch
-        run: pip install hatch
-      - name: Run pre-release checks
-        run: hatch run pre-release:all
+      - name: Install build tool
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install hatch
+      - name: Build package
+        run: hatch build

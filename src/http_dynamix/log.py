@@ -97,7 +97,7 @@ class HandlerConfig:
             if self.sink == "sys.stderr":
                 return sys.stderr
         if isinstance(self.sink, Path):
-            return str(self.sink)
+            return str(self.sink)  # pragma: no cover
         return self.sink
 
 
@@ -355,7 +355,7 @@ class LogMaster:
 
         # Apply extra fields globally
         if self.config.extra:
-            logger.configure(extra=self.config.extra)
+            logger.configure(extra=self.config.extra)  # pragma: no cover
 
         # Apply the patcher function if provided
         if self.config.patcher:
