@@ -50,8 +50,22 @@ For developers or contributors:
     # Build documentation in HTML format
     hatch run pre-release:docs-html
 
-For more information on which environment available, check the 
-project's `pyproject.toml` file.
+Docker/Compose Test Execution
+-----------------------------
+
+You can run all tests in parallel using Docker Compose:
+
+.. code-block:: bash
+
+    docker compose up --build
+
+To run only integration tests, override the command in compose.yaml:
+
+.. code-block:: yaml
+
+    command: ["pytest", "-n", "auto", "tests/test_clients_integration.py"]
+
+This uses pytest-xdist for parallel execution. The Dockerfile and compose.yaml are set up for both CI and local testing.
 
 Publish Documentation To Confluence
 -----------------------------------

@@ -5,7 +5,8 @@ This module contains the protocols for the dynamic clients.
 
 from __future__ import annotations
 
-from typing import Any, Coroutine, Protocol
+from collections.abc import Coroutine
+from typing import Any, Protocol
 
 from http_dynamix.enums import HTTPMethod
 from http_dynamix.types import Response

@@ -1,0 +1,125 @@
+# PyPI package release workflow template
+#
+# Before using this workflow, ensure:
+# 1. Your project uses hatch for building (or replace 'hatch build' with your build tool).
+# 2. You have enabled OIDC authentication for your PyPI project (see https://docs.pypi.org/trusted-publishers/ for setup).
+#    - Go to your PyPI project settings > 'Add a trusted publisher' and follow the instructions for GitHub Actions.
+#    - Set the environment name below to match your PyPI trusted publisher configuration (default: Production).
+# 3. If you use a password/token instead, add 'password: ${{ secrets.PYPI_API_TOKEN }}' under 'with:' in the publish step.
+# 4. This workflow triggers on pushes to 'main' and on version tags (e.g., 1.2.3).
+# 5. You can reuse this template in other repositories with minimal changes.
+#
+name: PyPI package release
+
+on:
+  push:
+    tags: ['[0-9]+.[0-9]+.[0-9]*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pypi-release
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build Python package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+
+      - name: Install build tool
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install hatch
+
+      - name: Build package
+        run: hatch build
+
+      - name: Upload distribution files as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-distribution-files
+          path: dist/*
+          if-no-files-found: error
+
+  publish:
+    name: Publish to PyPI
+    if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/')
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+        name: Production # Change this to match your PyPI trusted publisher environment
+        url: https://pypi.org/project/http-dynamix/
+        # If using a different environment, set the URL accordingly
+        # e.g., for TestPyPI, use 'https://test.pypi.org/'
+    permissions:
+      id-token: write
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+
+      - name: Download distribution files
+        uses: actions/download-artifact@v4
+        with:
+          name: python-distribution-files
+          path: dist
+
+      - name: Publish package to PyPI
+        uses: pypa/gh-action-pypi-publish@v1.12.4
+        with:
+          skip-existing: true
+          # password: ${{ secrets.PYPI_API_TOKEN }} # Uncomment if using token authentication instead of OIDC
+
+  release:
+    name: Create GitHub Release
+    if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+
+      - name: Download distribution files
+        uses: actions/download-artifact@v4
+        with:
+          name: python-distribution-files
+          path: dist
+
+      - name: Generate changelog
+        id: changelog
+        uses: googleapis/release-please-action@v4
+        with:
+          release-type: python
+
+      - name: Create GitHub Release and upload artifacts
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          files: dist/*
+          body: ${{ steps.changelog.outputs.changelog }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

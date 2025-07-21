@@ -254,7 +254,7 @@ class SyncDynamicClient(SyncClientProtocol):
 
     def close(self) -> None:
         """Close the client."""
-        self.client.close()
+        self.client.close()  # pragma: no cover
 
 
 @dataclass

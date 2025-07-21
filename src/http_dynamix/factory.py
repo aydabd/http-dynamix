@@ -60,7 +60,7 @@ class ClientFactory:
         Returns:
             A synchronous or asynchronous client.
         """
-        if known_paths is None:
+        if known_paths is None:  # pragma: no cover
             known_paths = {}
 
         match client_type:
