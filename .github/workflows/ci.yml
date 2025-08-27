@@ -13,7 +13,7 @@ jobs:
         python-version: ["3.11", "3.12", "3.13"]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Patch environment file for Python version
         run: |
           sed -i 's/- python/- python=${{ matrix.python-version }}/' .githooks.d/pre-commit_environment.yml
@@ -34,7 +34,7 @@ jobs:
     needs: pre-release
     steps:
       - name: Checkout code with tags
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Set up Python
