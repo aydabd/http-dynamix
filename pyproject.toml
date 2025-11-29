@@ -239,6 +239,9 @@ addopts = [
     "--color=yes",
 ]
 filterwarnings = "ignore::DeprecationWarning"
+markers = [
+    "integration: marks tests as integration tests that require external services (may be skipped on timeout)",
+]
 
 [tool.coverage.run]
 data_file = "test-report/.coverage"
