@@ -80,9 +80,7 @@ async def async_client():
 async def test_async_client_httpbin(async_client, endpoint, method, params):
     try:
         client_endpoint = getattr(async_client, endpoint)
-        response = await getattr(client_endpoint, method)(
-            params=params if params else None
-        )
+        response = await getattr(client_endpoint, method)(params=params if params else None)
         assert response.status_code in (200, 201, 204)
         assert response.url.host == "httpbin.org"
     except NETWORK_EXCEPTIONS:

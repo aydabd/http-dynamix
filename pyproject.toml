@@ -240,7 +240,7 @@ addopts = [
 ]
 filterwarnings = "ignore::DeprecationWarning"
 markers = [
-    "integration: marks tests as integration tests that require external services (may be skipped on timeout)",
+    "integration: marks tests as integration tests that require external services (may be skipped on network issues)",
 ]
 
 [tool.coverage.run]
