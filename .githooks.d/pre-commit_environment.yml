@@ -11,5 +11,5 @@ channels:
   - nodefaults
 dependencies:
   - python
-  - hatch
+  - hatch>=1.14.2
   - pandoc
