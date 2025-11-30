@@ -71,7 +71,7 @@ jobs:
           python-version: 3.12
 
       - name: Download distribution files
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: python-distribution-files
           path: dist
@@ -101,7 +101,7 @@ jobs:
           python-version: 3.12
 
       - name: Download distribution files
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: python-distribution-files
           path: dist
