@@ -48,7 +48,7 @@ class SyncDynamicClient(SyncClientProtocol):
             else:
                 segment_name = segment.name
                 transformed = SegmentFormatter(
-                    self.segment_format, self.known_paths
+                    segment.format, self.known_paths
                 ).transform(segment_name)
                 transformed_segments.append(transformed)
 
