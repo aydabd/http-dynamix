@@ -21,7 +21,7 @@ jobs:
       - name: Show patched environment file
         run: cat .githooks.d/pre-commit_environment.yml
       - name: Setup micromamba
-        uses: mamba-org/setup-micromamba@v2
+        uses: mamba-org/setup-micromamba@v3
         with:
           environment-file: .githooks.d/pre-commit_environment.yml
           environment-name: http-dynamix-env
