@@ -108,7 +108,7 @@ jobs:
 
       - name: Generate changelog
         id: changelog
-        uses: googleapis/release-please-action@v4
+        uses: googleapis/release-please-action@v5
         with:
           release-type: python
 
