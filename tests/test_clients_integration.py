@@ -60,7 +60,6 @@ def test_sync_client_options(sync_client):
         pytest.skip("External service httpbin.org is not reachable")
 
 
-@pytest.mark.asyncio
 @pytest_asyncio.fixture(scope="function")
 async def async_client():
     client = ClientFactory.create(HTTPBIN_URL, client_type=ClientType.ASYNC)
