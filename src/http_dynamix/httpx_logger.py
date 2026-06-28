@@ -532,7 +532,7 @@ class YamlFormatter:
         """
         return any(ct in content_type.lower() for ct in self.content_types)
 
-    def format(self, content: str | bytes, max_length: int | None = None) -> str:
+    def format(self, content: str | bytes, max_length: int | None = None) -> Any:
         """Format the YAML content.
 
         Args:
